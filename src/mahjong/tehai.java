@@ -7,12 +7,15 @@ package mahjong;
  *
  * @author Hakurei
  */
-public class tehai {
+public class tehai{
     hai[] tehai = new hai[18];
+    hai[] sim=new hai[18];
     int tehaiCount = 0;
-    public tehai(String s){
+    int[][] yuukou = new int[15][38];
+    String origin = "";
+    tehai(String s){
+        origin = s;
         int scount = 0;
-        
         for(int i = 0 ; i <s.length();i++ ){
             
             if(Character.isDigit(s.charAt(i)))
@@ -29,6 +32,7 @@ public class tehai {
                     n[1]=s.charAt(i);
                     String t = new String(n);
                     tehai[tehaiCount] =new hai(t);
+                    sim[tehaiCount] = new hai(t);
                     tehaiCount++;
                 }
                 scount = i+1;
@@ -40,6 +44,12 @@ public class tehai {
             }
         }
         this.sortTehai();
+//        yuukou = this.simulation();
+    }
+    
+    public tehai copy(){
+        tehai copy = new tehai(this.origin);
+        return copy;
     }
    
     public void testPrint()
@@ -56,9 +66,29 @@ public class tehai {
         }
         System.out.println();
         if(this.stepsToWin()!=0){
-            System.out.println("This hand still need "+ this.stepsToWin() +" steps before tenpai!");
+            System.out.println(this.stepsToWin() +" 向聴");
         }
-        else System.out.println("Already tenpai!");
+        else {
+            System.out.println("tenpai");
+        }
+
+    
+//        for(int i = 0;i<15;i++){
+//            if(yuukou[i][0]==1){
+//                System.out.print("打");
+//                this.tehai[i].testPrint();
+//                System.out.print("摸");
+//                int count =0;
+//                for(int j =1;j<38;j++){
+//                    if(yuukou[i][j]==1){
+//                        new hai(j).testPrint();
+//                        count++;                      
+//                    }
+//                }
+//                System.out.println("共" + count +"种");
+//                
+//            }
+//        }
     
     }
     
@@ -160,8 +190,8 @@ public class tehai {
         return a.increase(b)&&b.increase(c);
     }
      
-    private void sortTehai(){
-        int[] sortvalue = new int[tehaiCount];
+     private void sortTehai(){
+        int[] sortvalue = new int[this.tehaiCount];
         
         for(int i = 0;i<tehaiCount;i++)
         {
@@ -216,7 +246,12 @@ public class tehai {
         
     }
     
-    private tehai tempRemove(int index){
+    void replace(int index, int n){
+        tehai[index] = new hai(n);
+        this.sortTehai();
+    }
+    
+   /* private tehai tempRemove(int index){
         tehai t = this;
         for(int i = 0;i<this.tehaiCount;i++){
             if(i!=index - 1){
@@ -226,10 +261,10 @@ public class tehai {
         this.tehai=t.tehai;
         this.tehaiCount--;
         return t;
-    }//想不起来当时我为什么写的这个方法，应该改是在判断点数的时候会使用到
+    }//想不起来当时我为什么写的这个方法，应该改是在判断点数的时候会使用到*/
     
     
-    private R scoreCheck(){
+   /* private R scoreCheck(){
         tehai t = this;
         R r = new R('y', 32000, 1.0);
         
@@ -239,12 +274,12 @@ public class tehai {
             }
         }
         return r;
-    }
+    }*/
     
-    private boolean leftMostKotsu()
+  /*  private boolean leftMostKotsu()
     {
         return this.kotsu(this.tehai[0],this.tehai[1], this.tehai[2]);
-    }
+    }*/
     
     private int findNextDifferent(int i){
         int c = i;
@@ -256,9 +291,9 @@ public class tehai {
         }
         return c;
     }//用于移动到下一非重复手牌
-    private boolean leftMostShuntsu(){
+   /* private boolean leftMostShuntsu(){
         return this.shuntsu(this.tehai[0], this.tehai[this.findNextDifferent(0)], this.tehai[this.findNextDifferent(this.findNextDifferent(0))]);
-    }
+    }*/
     
     private int[] tileCounter(){
         int[] board = new int[14];
@@ -322,13 +357,17 @@ public class tehai {
     
     
     
-    private int stepsToWin(){
+     int stepsToWin(){
         int i = 0;
         int steps = 8;
         int steps7 = 6;
         int stepsk = 13;
         while(this.tehai[i]!=null){
-            if(this.tehai[i+2]!=null&&(shuntsu(this.tehai[i],this.tehai[i+1],this.tehai[i+2])||kotsu(this.tehai[i],this.tehai[i+1],this.tehai[i+2]))){
+            if(this.tehai[i+4]!=null&&this.tehai[i].sp23334(this.tehai[i], this.tehai[i+1], this.tehai[i+2], this.tehai[i+3], this.tehai[i+4])){
+                steps -=3;
+                i+=5;
+            }
+            else if(this.tehai[i+2]!=null&&(shuntsu(this.tehai[i],this.tehai[i+1],this.tehai[i+2])||kotsu(this.tehai[i],this.tehai[i+1],this.tehai[i+2]))){
                 steps -= 2;
                 i += 3;
             }
@@ -336,15 +375,45 @@ public class tehai {
                 steps -=1;
                 i += 2;
             }
-            else i++;
+            else {
+                i++;
+            }
         }
         steps7 = steps7 - tileCounter()[0];
         stepsk = stepsk - this.different19() - this.hasA19Pair();
         return Math.min(Math.min(steps, steps7),stepsk);
-    }//向听数检测
+    }//向数检测
     
     /*对数组进行操作可能会导致计算空间过大。能否采用别的可能性？粗略计算游戏树，
     每个节点有18个对象的数组，应该会是个相当大的工程量。*/
+  /*    private int[][] simulation() {
+        int current = this.stepsToWin();
+        int[][] board = new int[15][38];
+        for(int i = 1; i < 14;i++){
+            for(int j = 1; j <37;j++){
+                //替换机制
+                tehai next = 
+                next.tehai[i-1]= new hai(j);
+                next.sortTehai();
+                if(next.stepsToWin()<current){
+                    board[i][0]=1;
+                    board[i][j]=1;
+                }
+            }
+        }
+        return board;
+    }*/
+      
+      private void resetTehai(){
+          for(int i = 0; i < tehaiCount;i++){
+              sim[i]=tehai[i].copy();
+          }
+      }
+      
+
+      
+      
+   
 }
 
   

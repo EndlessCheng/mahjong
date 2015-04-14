@@ -23,10 +23,10 @@ public class shoku {
      
      public int shokuValue()
      {
-         if (MANZU==this) return 100;
-         else if(SOUZU==this) return 200;
-         else if (PINZU==this) return 300;
-         else return 400;
+         if (MANZU==this) return 0;
+         else if(SOUZU==this) return 10;
+         else if (PINZU==this) return 20;
+         else return 30;
      } 
              
        

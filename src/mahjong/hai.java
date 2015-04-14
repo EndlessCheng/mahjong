@@ -16,7 +16,7 @@ public class hai {
     public hai(String s1){
         switch(s1.charAt(0))
         {
-            case '1':value = 1;break;
+            
             case '9':value = 9;break;
             case '8':value = 8;break;
             case '7':value = 7;break;
@@ -25,6 +25,7 @@ public class hai {
             case '4':value = 4;break;
             case '3':value = 3;break;
             case '2':value = 2;break;
+            case '1':value = 1;break;
          }
         switch(s1.charAt(1))
         {
@@ -36,21 +37,28 @@ public class hai {
      }
     
     public hai(int s){
-        if(s<=8){
-            shoku = shoku.MANZU;
-            value = s + 1;
+        s = s -1;
+        if(s/10==0){
+            shoku =shoku.MANZU;
         }
-        else if(s>8&&s<=17){
+        else if(s/10==1){
             shoku = shoku.SOUZU;
-            value = s - 8;
         }
-        else if(s>17&&s<=26){
+        else if(s/10==2){
             shoku = shoku.PINZU;
-            value = s - 17;
         }
-        else if(s>26&&s<=33){
+        else if(s/10==3){
             shoku = shoku.KAZE;
-            value = s -26;
+        }
+        else{
+            System.out.print("nonexisting tile, error");
+            System.exit(0);
+        }
+        if(s==9||s==19||s==29){
+            value = 5;
+        }
+        else{
+            value = s-(s/10)*10+1;
         }
     }/*int型的constructor.0-8 为万字1-9 9-17为索子 18-26为饼子 27-33为字牌*/
             
@@ -92,4 +100,19 @@ public class hai {
     public boolean tatsu(hai h){
         return h.shoku==this.shoku&&Math.abs(h.value-this.value)<=2;
     }
+    
+    public boolean sp23334(hai a, hai b, hai c, hai d,hai e){
+        if(a.shoku==b.shoku&&b.shoku==c.shoku&&c.shoku==d.shoku&&d.shoku==e.shoku){
+            if(a.value+1==b.value&&b.value==c.value&&c.value==d.value&&d.value+1==e.value){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public hai copy(){
+        int v = this.shoku.shokuValue()+this.value;
+        hai n = new hai(v);
+        return n;
+        }
 }
