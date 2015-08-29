@@ -19,7 +19,7 @@ public class shoku {
      public final static shoku MANZU = new shoku('m');
      public final static shoku SOUZU = new shoku('s');
      public final static shoku PINZU = new shoku('p');
-     public final static shoku KAZE = new shoku('k');
+     public final static shoku JIHAI = new shoku('z');
      
      public int shokuValue()
      {

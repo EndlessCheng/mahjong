@@ -12,6 +12,8 @@ import java.math.*;
 public class hai {
     private shoku shoku;
     private int value;
+    private int rvalue;
+    private boolean used = false;
     
     public hai(String s1){
         switch(s1.charAt(0))
@@ -32,8 +34,9 @@ public class hai {
              case 'm':shoku = shoku.MANZU;break;
              case 's':shoku = shoku.SOUZU;break;
              case 'p':shoku = shoku.PINZU;break;
-             case 'k':shoku = shoku.KAZE;break;
+             case 'z':shoku = shoku.JIHAI;break;
         }
+        rvalue = 10-value;
      }
     
     public hai(int s){
@@ -48,7 +51,12 @@ public class hai {
             shoku = shoku.PINZU;
         }
         else if(s/10==3){
-            shoku = shoku.KAZE;
+            shoku = shoku.JIHAI;
+        }
+        else if(s==98){
+            value = -1;
+            rvalue = -1;
+            shoku = shoku.JIHAI;//特殊判断用白牌
         }
         else{
             System.out.print("nonexisting tile, error");
@@ -57,14 +65,16 @@ public class hai {
         if(s==9||s==19||s==29){
             value = 5;
         }
+        
         else{
             value = s-(s/10)*10+1;
+            rvalue = 10-value;
         }
-    }/*int型的constructor.0-8 为万字1-9 9-17为索子 18-26为饼子 27-33为字牌*/
+    }//int型的constructor.
             
     public boolean is19()
     {
-        if(this.value==1||this.value==9||this.shoku==shoku.KAZE)
+        if(this.value==1||this.value==9||this.shoku==shoku.JIHAI)
         {
             return true;
         }
@@ -80,11 +90,7 @@ public class hai {
     
     public boolean identical(hai a)
     {
-        if(a.shoku==this.shoku&&a.value==this.value)
-        {
-            return true;
-        }
-        else return false;
+        return a.shoku==this.shoku&&a.value==this.value;
     }
     
     public boolean increase(hai a)
@@ -97,8 +103,13 @@ public class hai {
         return this.shoku.shokuValue()+value;
     }
     
+    public int haiRSortValue()
+    {
+        return this.shoku.shokuValue()+rvalue;
+    }
+    
     public boolean tatsu(hai h){
-        return h.shoku==this.shoku&&Math.abs(h.value-this.value)<=2;
+        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1);
     }
     
     public boolean sp23334(hai a, hai b, hai c, hai d,hai e){
@@ -109,10 +120,21 @@ public class hai {
         }
         return false;
     }
+    public boolean used(){
+        return this.used;
+    }
     
     public hai copy(){
         int v = this.shoku.shokuValue()+this.value;
         hai n = new hai(v);
         return n;
-        }
+    }
+    
+    public void setUsed(){
+        this.used = true;
+    }
+    
+    public boolean isJihai(){
+        return this.shoku==shoku.JIHAI;
+    }
 }

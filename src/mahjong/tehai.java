@@ -9,20 +9,25 @@ package mahjong;
  */
 public class tehai{
     hai[] tehai = new hai[18];
+    hai[] rtehai = new hai[18];
     hai[] sim=new hai[18];
     int tehaiCount = 0;
     int[][] yuukou = new int[15][38];
     String origin = "";
+    int mod = 0;
+    int stw = 0;
     tehai(String s){
         origin = s;
+        
         int scount = 0;
+    //tile initialization
         for(int i = 0 ; i <s.length();i++ ){
             
             if(Character.isDigit(s.charAt(i)))
             {
             
             }
-            else if(s.charAt(i)=='m'||s.charAt(i)=='p'||s.charAt(i)=='s'||s.charAt(i)=='k')
+            else if(s.charAt(i)=='m'||s.charAt(i)=='p'||s.charAt(i)=='s'||s.charAt(i)=='z')
             {
                 
                 for(int j = scount; j<i;j++)
@@ -32,7 +37,8 @@ public class tehai{
                     n[1]=s.charAt(i);
                     String t = new String(n);
                     tehai[tehaiCount] =new hai(t);
-                    sim[tehaiCount] = new hai(t);
+                    //sim[tehaiCount] = new hai(t);不知道做什么用的
+                    rtehai[tehaiCount] = new hai(t);
                     tehaiCount++;
                 }
                 scount = i+1;
@@ -43,7 +49,16 @@ public class tehai{
                 System.exit(0);
             }
         }
+        if((this.tehaiCount-2)%3!=0){
+            System.out.println("total tiles:"+ tehaiCount);
+            System.out.println("invalid hand");
+            System.exit(0);
+        }
+        else{
+            this.mod = (14-tehaiCount)/3;
+        }
         this.sortTehai();
+        this.stepsToWin();
 //        yuukou = this.simulation();
     }
     
@@ -54,22 +69,23 @@ public class tehai{
    
     public void testPrint()
     {
-        if(tehaiCount<13)
-        {
-            System.out.println("not a valid hand");
-        }
-        else{
+        
+       
             for(int i = 0;i<tehaiCount;i++)
             {
                 tehai[i].testPrint();
             }
-        }
+        
         System.out.println();
-        if(this.stepsToWin()!=0){
-            System.out.println(this.stepsToWin() +" 向聴");
+        int result = this.stw;
+        if(result>1){
+            System.out.println(result-1 +" 向聴");
         }
-        else {
-            System.out.println("tenpai");
+        else if(result==1){
+            System.out.println("聽牌");
+        }
+        else if(result==0){
+            System.out.println("和牌");
         }
 
     
@@ -130,56 +146,7 @@ public class tehai{
         }
         return r;
     }
-    
-    private boolean isKokushi()
-    {
-        boolean r = false;
-        if(this.all19())
-        {
-            if(this.searchForHai("1m"))
-            {
-                if(this.searchForHai("1p"))
-                {
-                    if(this.searchForHai("1s"))
-                    {
-                        if(this.searchForHai("9m"))
-                        {
-                            if(this.searchForHai("9p"))
-                            {
-                                if(this.searchForHai("9s"))
-                                {
-                                    if(this.searchForHai("1k"))
-                                    {
-                                        if(this.searchForHai("2k"))
-                                        {
-                                            if(this.searchForHai("3k"))
-                                            {
-                                                if(this.searchForHai("4k"))
-                                                {
-                                                    if(this.searchForHai("5k"))
-                                                    {
-                                                        if(this.searchForHai("6k"))
-                                                        {
-                                                            if(this.searchForHai("7k"))
-                                                            {
-                                                                r=true;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return r;
-    }
-    
+       
     private boolean kotsu(hai a,hai b, hai c)
     {
         return a.identical(b)&&b.identical(c);
@@ -193,17 +160,10 @@ public class tehai{
      private void sortTehai(){
         int[] sortvalue = new int[this.tehaiCount];
         
-        for(int i = 0;i<tehaiCount;i++)
-        {
-            //System.out.println(this.tehai[i].haiSortValue());
+        for(int i = 0;i<tehaiCount;i++){
             sortvalue[i]=this.tehai[i].haiSortValue();
-            
         }
         java.util.Arrays.sort(sortvalue);
-        /*for(int i = 0;i<tehaiCount;i++){
-            System.out.print(sortvalue[i]);
-            
-        }*/
         for(int j = 0;j<tehaiCount;j++)
         {
             if(this.tehai[j].haiSortValue()==sortvalue[j])
@@ -215,6 +175,39 @@ public class tehai{
                 for(int k = j; k<tehaiCount;k++)
                 {
                     if(this.tehai[k].haiSortValue()==sortvalue[j])
+                    {
+                        hai temp = this.tehai[j];
+                        this.tehai[j]=this .tehai[k];
+                        this.tehai[k]= temp;
+                        
+                    }
+                }
+                    
+            }
+        }
+        
+    }
+     
+     private void RsortTehai(){
+        int[] sortvalue = new int[this.tehaiCount];
+        
+        for(int i = 0;i<tehaiCount;i++)
+        {
+            sortvalue[i]=this.tehai[i].haiRSortValue();
+            
+        }
+        java.util.Arrays.sort(sortvalue);
+        for(int j = 0;j<tehaiCount;j++)
+        {
+            if(this.tehai[j].haiRSortValue()==sortvalue[j])
+            {
+                
+            }
+            else
+            {
+                for(int k = j; k<tehaiCount;k++)
+                {
+                    if(this.tehai[k].haiRSortValue()==sortvalue[j])
                     {
                         hai temp = this.tehai[j];
                         this.tehai[j]=this .tehai[k];
@@ -251,51 +244,30 @@ public class tehai{
         this.sortTehai();
     }
     
-   /* private tehai tempRemove(int index){
-        tehai t = this;
-        for(int i = 0;i<this.tehaiCount;i++){
-            if(i!=index - 1){
-                t.tehai[i]=this.tehai[i];
-            }
-        }
-        this.tehai=t.tehai;
-        this.tehaiCount--;
-        return t;
-    }//想不起来当时我为什么写的这个方法，应该改是在判断点数的时候会使用到*/
-    
-    
-   /* private R scoreCheck(){
-        tehai t = this;
-        R r = new R('y', 32000, 1.0);
-        
-        if(t.hasPair()){
-            if(t.isKokushi()){
-                return r;
-            }
-        }
-        return r;
-    }*/
-    
-  /*  private boolean leftMostKotsu()
-    {
-        return this.kotsu(this.tehai[0],this.tehai[1], this.tehai[2]);
-    }*/
-    
-    private int findNextDifferent(int i){
+    private int findNextDifferent(hai[] h,int i){
         int c = i;
-        while(c<tehaiCount){
-            if(!tehai[i].identical(tehai[c])){
-                break;
+        while(h[c]!=null){
+            if(!tehai[i].identical(tehai[c]) && i!=c){
+                return c;
             }
-            c++;
+            else c++;
         }
-        return c;
+        return -1;
     }//用于移动到下一非重复手牌
-   /* private boolean leftMostShuntsu(){
-        return this.shuntsu(this.tehai[0], this.tehai[this.findNextDifferent(0)], this.tehai[this.findNextDifferent(this.findNextDifferent(0))]);
-    }*/
     
-    private int[] tileCounter(){
+    private int findUnused(hai[] h,int i){
+        int c = i;
+        while(h[c]!=null){
+            if(!h[c].used()){
+                return c;
+            }
+            else c++;
+        }
+        return -1;
+    }
+
+    
+    private int[] tileCounter(){//用于简易分析手牌组成
         int[] board = new int[14];
         int[] r = new int[3];
         int i = 0;
@@ -357,31 +329,62 @@ public class tehai{
     
     
     
-     int stepsToWin(){
-        int i = 0;
-        int steps = 8;
-        int steps7 = 6;
-        int stepsk = 13;
-        while(this.tehai[i]!=null){
-            if(this.tehai[i+4]!=null&&this.tehai[i].sp23334(this.tehai[i], this.tehai[i+1], this.tehai[i+2], this.tehai[i+3], this.tehai[i+4])){
-                steps -=3;
-                i+=5;
+     private void stepsToWin(){//必要针对不同牌数的情况
+        int steps = 9 - this.mod*2;
+        int usefulTatsu = 5 - this.mod;
+        int tatsuCount = 0;
+        int steps7 = 7;
+        int stepsk = 14;
+        int pairused = 1;
+        hai[] localCopy = (hai[])this.tehai.clone();
+            while(findUnused(localCopy,0)!=-1){
+                int i = findUnused(localCopy,0);
+                    if(findNextDifferent(localCopy,i)!=-1&&findNextDifferent(localCopy,findNextDifferent(localCopy,i))!=-1&&shuntsu(localCopy[i],localCopy[findNextDifferent(localCopy,i)],localCopy[findNextDifferent(localCopy,findNextDifferent(localCopy,i))])){
+                            steps -= 2;
+                            usefulTatsu --;
+                            localCopy[i].setUsed();
+                            localCopy[findNextDifferent(localCopy,i)].setUsed();
+                            localCopy[findNextDifferent(localCopy,findNextDifferent(localCopy,i))].setUsed();
+                        }
+                    else if(localCopy[i+2]!=null&&kotsu(localCopy[i],localCopy[i+1],localCopy[i+2])){
+                        steps -= 2;
+                        usefulTatsu --;
+                        localCopy[i].setUsed();
+                        localCopy[i+1].setUsed();
+                        localCopy[i+2].setUsed();                    
+                    }
+                    else if(localCopy[i+1]!=null&&localCopy[i].identical(localCopy[i+1])){
+                        steps -= 1;
+                        pairused = 0;
+                        tatsuCount++;
+                        localCopy[i].setUsed();
+                        localCopy[i+1].setUsed();
+                    }
+                    else if(findNextDifferent(localCopy,i)!=-1&&localCopy[i].tatsu(localCopy[findNextDifferent(localCopy,i)])&&!localCopy[i].isJihai()){
+                        steps -= 1;
+                        tatsuCount++;
+                        localCopy[i].setUsed();
+                        localCopy[findNextDifferent(localCopy,i)].setUsed();
+                    }
+                    else{
+                        localCopy[i].setUsed();
+                    }
+                
             }
-            else if(this.tehai[i+2]!=null&&(shuntsu(this.tehai[i],this.tehai[i+1],this.tehai[i+2])||kotsu(this.tehai[i],this.tehai[i+1],this.tehai[i+2]))){
-                steps -= 2;
-                i += 3;
+
+            if(this.mod == 0){
+                steps7 = steps7 - tileCounter()[0];
+                stepsk = stepsk - this.different19() - this.hasA19Pair();
             }
-            else if(this.tehai[i+1]!=null&&this.tehai[i].tatsu(this.tehai[i+1])){
-                steps -=1;
-                i += 2;
+            if(tatsuCount>usefulTatsu){
+                steps = steps +tatsuCount-usefulTatsu;
             }
-            else {
-                i++;
+            if(steps==0){
+                steps += pairused;  
             }
-        }
-        steps7 = steps7 - tileCounter()[0];
-        stepsk = stepsk - this.different19() - this.hasA19Pair();
-        return Math.min(Math.min(steps, steps7),stepsk);
+        this.stw = Math.min(Math.min(steps, steps7),stepsk);
+        //return Math.min(Math.min(steps, steps7),stepsk);
+            
     }//向数检测
     
     /*对数组进行操作可能会导致计算空间过大。能否采用别的可能性？粗略计算游戏树，
