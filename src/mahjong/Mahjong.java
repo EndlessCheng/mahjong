@@ -58,7 +58,7 @@ public class Mahjong {
         //原代码    
         
         for(int i = 0; i < h.tehaiCount;i++){
-            for(int j = 1; j <37;j++){
+            for(int j = 1; j <38;j++){
                 //替换机制
                 tehai next = h.copy();
                 next.replace(i, j);

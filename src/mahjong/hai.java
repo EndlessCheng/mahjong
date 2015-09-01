@@ -100,7 +100,7 @@ public class hai {
     }
     
     public boolean tatsu(hai h){
-        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1)&&this.shoku!=shoku.JIHAI;
+        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1)&&this.shoku!=shoku.JIHAI&&!h.used();
     }
     
 //    public boolean sp23334(hai a, hai b, hai c, hai d,hai e){

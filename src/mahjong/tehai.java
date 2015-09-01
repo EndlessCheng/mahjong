@@ -12,7 +12,6 @@ public class tehai{
     hai[] rtehai = new hai[18];
     hai[] sim=new hai[18];
     int tehaiCount = 0;
-    int[][] yuukou = new int[15][38];
     String origin = "";
     int mod = 0;
     int stw = 0;
@@ -56,7 +55,6 @@ public class tehai{
         }
         this.sortTehai();
         this.stepsToWin();
-//        yuukou = this.simulation();
     }
     
     tehai(String s,String nocalc){//使用于即将变化的手牌，不立刻计算向听数
@@ -171,12 +169,12 @@ public class tehai{
        
     private boolean kotsu(hai a,hai b, hai c)
     {
-        return a.identical(b)&&b.identical(c);
+        return a.identical(b)&&b.identical(c)&&!b.used()&&!c.used();
     }
     
     private boolean shuntsu(hai a, hai b, hai c)
     {
-        return a.increase(b)&&b.increase(c)&&!a.isJihai();
+        return a.increase(b)&&b.increase(c)&&!a.isJihai()&&!b.used()&&!c.used();
     }
      
      private void sortTehai(){
@@ -354,11 +352,11 @@ public class tehai{
     
      private void stepsToWin(){//必要针对不同牌数的情况
         int steps = 9 - this.mod*2;
-        int usefulTatsu = 5 - this.mod;
+        int usefulTatsu = 4 - this.mod;
         int tatsuCount = 0;
         int steps7 = 7;
         int stepsk = 14;
-        int pairused = 1;
+        int pairused = 0;
         hai[] localCopy = (hai[])this.tehai.clone();
             while(findUnused(localCopy,0)!=-1){
                 int i = findUnused(localCopy,0);
@@ -367,7 +365,7 @@ public class tehai{
                             usefulTatsu --;
                             localCopy[i].setUsed();
                             localCopy[findNextDifferent(localCopy,i)].setUsed();
-                            localCopy[findNextDifferent(localCopy,findNextDifferent(localCopy,i))].setUsed();
+                            localCopy[findNextDifferent(localCopy,findNextDifferent(localCopy,i))].setUsed();                            
                         }
                     else if(localCopy[i+2]!=null&&kotsu(localCopy[i],localCopy[i+1],localCopy[i+2])){
                         steps -= 2;
@@ -378,8 +376,11 @@ public class tehai{
                     }
                     else if(localCopy[i+1]!=null&&localCopy[i].identical(localCopy[i+1])){
                         steps -= 1;
-                        pairused = 0;
-                        tatsuCount++;
+                        pairused ++;
+                        if(pairused>1){
+                            tatsuCount++;
+                            
+                        }
                         localCopy[i].setUsed();
                         localCopy[i+1].setUsed();
                     }
@@ -402,13 +403,13 @@ public class tehai{
             if(tatsuCount>usefulTatsu){
                 steps = steps + tatsuCount-usefulTatsu;
             }
-            if(steps==0){
-                steps += pairused;  
+            if(steps==0&&pairused==0){
+                steps +=1;  
             }
-            else if(steps==1){
-                if(usefulTatsu==1){}
-                else steps+= pairused;
-            }
+//            else if(steps==1){
+//                if(usefulTatsu==1){}
+//                else steps+= pairused;
+//            }
         this.stw = Math.min(Math.min(steps, steps7),stepsk);
         //return Math.min(Math.min(steps, steps7),stepsk);
             
@@ -441,7 +442,7 @@ public class tehai{
         int current = this.getStw();
         int[][] board = new int[this.tehaiCount][38];
         for(int i = 0; i < this.tehaiCount;i++){
-            for(int j = 1; j <37;j++){
+            for(int j = 1; j <38;j++){
                 //替换机制
                 tehai next = this.copy();
                 next.replace(i, j);
