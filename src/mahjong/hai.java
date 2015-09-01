@@ -10,7 +10,7 @@ import java.math.*;
  * @author Hakurei
  */
 public class hai {
-    private shoku shoku;
+    shoku shoku;
     private int value;
     private int rvalue;
     private boolean used = false;
@@ -53,11 +53,6 @@ public class hai {
         else if(s/10==3){
             shoku = shoku.JIHAI;
         }
-        else if(s==98){
-            value = -1;
-            rvalue = -1;
-            shoku = shoku.JIHAI;//特殊判断用白牌
-        }
         else{
             System.out.print("nonexisting tile, error");
             System.exit(0);
@@ -74,11 +69,7 @@ public class hai {
             
     public boolean is19()
     {
-        if(this.value==1||this.value==9||this.shoku==shoku.JIHAI)
-        {
-            return true;
-        }
-        else return false;
+        return this.value==1||this.value==9||this.shoku==shoku.JIHAI;
     }
     
     public void testPrint()
@@ -109,17 +100,17 @@ public class hai {
     }
     
     public boolean tatsu(hai h){
-        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1);
+        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1)&&this.shoku!=shoku.JIHAI;
     }
     
-    public boolean sp23334(hai a, hai b, hai c, hai d,hai e){
-        if(a.shoku==b.shoku&&b.shoku==c.shoku&&c.shoku==d.shoku&&d.shoku==e.shoku){
-            if(a.value+1==b.value&&b.value==c.value&&c.value==d.value&&d.value+1==e.value){
-                return true;
-            }
-        }
-        return false;
-    }
+//    public boolean sp23334(hai a, hai b, hai c, hai d,hai e){
+//        if(a.shoku==b.shoku&&b.shoku==c.shoku&&c.shoku==d.shoku&&d.shoku==e.shoku){
+//            if(a.value+1==b.value&&b.value==c.value&&c.value==d.value&&d.value+1==e.value){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
     public boolean used(){
         return this.used;
     }

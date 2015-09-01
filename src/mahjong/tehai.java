@@ -18,11 +18,8 @@ public class tehai{
     int stw = 0;
     tehai(String s){
         origin = s;
-        
         int scount = 0;
-    //tile initialization
-        for(int i = 0 ; i <s.length();i++ ){
-            
+        for(int i = 0 ; i <s.length();i++ ){//tile initialization
             if(Character.isDigit(s.charAt(i)))
             {
             
@@ -62,8 +59,52 @@ public class tehai{
 //        yuukou = this.simulation();
     }
     
-    public tehai copy(){
-        tehai copy = new tehai(this.origin);
+    tehai(String s,String nocalc){//使用于即将变化的手牌，不立刻计算向听数
+        origin = s;
+        int scount = 0;
+        for(int i = 0 ; i <s.length();i++ ){//tile initialization
+            if(Character.isDigit(s.charAt(i)))
+            {
+            
+            }
+            else if(s.charAt(i)=='m'||s.charAt(i)=='p'||s.charAt(i)=='s'||s.charAt(i)=='z')
+            {
+                
+                for(int j = scount; j<i;j++)
+                {
+                    char[] n = new char[2];
+                    n[0]=s.charAt(j);
+                    n[1]=s.charAt(i);
+                    String t = new String(n);
+                    tehai[tehaiCount] =new hai(t);
+                    //sim[tehaiCount] = new hai(t);不知道做什么用的
+                    rtehai[tehaiCount] = new hai(t);
+                    tehaiCount++;
+                }
+                scount = i+1;
+            }
+            else
+            {
+                System.out.println("invalid input");
+                System.exit(0);
+            }
+        }
+        if((this.tehaiCount-2)%3!=0){
+            System.out.println("total tiles:"+ tehaiCount);
+            System.out.println("invalid hand");
+            System.exit(0);
+        }
+        else{
+            this.mod = (14-tehaiCount)/3;
+        }
+        this.sortTehai();
+        if(!nocalc.equalsIgnoreCase("nocalc")){
+            this.stepsToWin();
+        }//考虑将有效牌也集成
+    }
+    
+    public tehai copy(){        
+        tehai copy = new tehai(this.origin,"nocalc");
         return copy;
     }
    
@@ -87,25 +128,6 @@ public class tehai{
         else if(result==0){
             System.out.println("和牌");
         }
-
-    
-//        for(int i = 0;i<15;i++){
-//            if(yuukou[i][0]==1){
-//                System.out.print("打");
-//                this.tehai[i].testPrint();
-//                System.out.print("摸");
-//                int count =0;
-//                for(int j =1;j<38;j++){
-//                    if(yuukou[i][j]==1){
-//                        new hai(j).testPrint();
-//                        count++;                      
-//                    }
-//                }
-//                System.out.println("共" + count +"种");
-//                
-//            }
-//        }
-    
     }
     
     
@@ -154,7 +176,7 @@ public class tehai{
     
     private boolean shuntsu(hai a, hai b, hai c)
     {
-        return a.increase(b)&&b.increase(c);
+        return a.increase(b)&&b.increase(c)&&!a.isJihai();
     }
      
      private void sortTehai(){
@@ -242,9 +264,10 @@ public class tehai{
     void replace(int index, int n){
         tehai[index] = new hai(n);
         this.sortTehai();
+        this.stepsToWin();
     }
     
-    private int findNextDifferent(hai[] h,int i){
+    public int findNextDifferent(hai[] h,int i){
         int c = i;
         while(h[c]!=null){
             if(!tehai[i].identical(tehai[c]) && i!=c){
@@ -360,7 +383,7 @@ public class tehai{
                         localCopy[i].setUsed();
                         localCopy[i+1].setUsed();
                     }
-                    else if(findNextDifferent(localCopy,i)!=-1&&localCopy[i].tatsu(localCopy[findNextDifferent(localCopy,i)])&&!localCopy[i].isJihai()){
+                    else if(findNextDifferent(localCopy,i)!=-1&&localCopy[i].tatsu(localCopy[findNextDifferent(localCopy,i)])/*&&!localCopy[i].isJihai()*/){
                         steps -= 1;
                         tatsuCount++;
                         localCopy[i].setUsed();
@@ -377,41 +400,60 @@ public class tehai{
                 stepsk = stepsk - this.different19() - this.hasA19Pair();
             }
             if(tatsuCount>usefulTatsu){
-                steps = steps +tatsuCount-usefulTatsu;
+                steps = steps + tatsuCount-usefulTatsu;
             }
             if(steps==0){
                 steps += pairused;  
+            }
+            else if(steps==1){
+                if(usefulTatsu==1){}
+                else steps+= pairused;
             }
         this.stw = Math.min(Math.min(steps, steps7),stepsk);
         //return Math.min(Math.min(steps, steps7),stepsk);
             
     }//向数检测
-    
-    /*对数组进行操作可能会导致计算空间过大。能否采用别的可能性？粗略计算游戏树，
-    每个节点有18个对象的数组，应该会是个相当大的工程量。*/
-  /*    private int[][] simulation() {
-        int current = this.stepsToWin();
-        int[][] board = new int[15][38];
-        for(int i = 1; i < 14;i++){
-            for(int j = 1; j <37;j++){
-                //替换机制
-                tehai next = 
-                next.tehai[i-1]= new hai(j);
-                next.sortTehai();
-                if(next.stepsToWin()<current){
-                    board[i][0]=1;
-                    board[i][j]=1;
-                }
-            }
-        }
-        return board;
-    }*/
       
       private void resetTehai(){
           for(int i = 0; i < tehaiCount;i++){
               sim[i]=tehai[i].copy();
           }
       }
+      
+    public int getStw(){
+        return this.stw;
+    }
+    
+    public boolean equalTo(String s){
+        tehai target = new tehai(s);
+        return false;
+    }
+    
+    
+    
+    public int evaluation(){
+        //各种特殊牌型
+        //清一色
+        return 1;
+    }
+    
+    public int[][] simulate(){
+        int current = this.getStw();
+        int[][] board = new int[this.tehaiCount][38];
+        for(int i = 0; i < this.tehaiCount;i++){
+            for(int j = 1; j <37;j++){
+                //替换机制
+                tehai next = this.copy();
+                next.replace(i, j);
+                if(next.getStw()<current&&j%10!=0){
+                    board[i][0]=1;
+                    board[i][j]=1;
+                }
+            }
+        }
+        return board;
+    }
+    
       
 
       
