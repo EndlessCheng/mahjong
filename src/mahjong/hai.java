@@ -72,6 +72,13 @@ public class hai {
         return this.value==1||this.value==9||this.shoku==shoku.JIHAI;
     }
     
+    public String readHai(){
+        String r="";
+        r+=String.valueOf(this.value);
+        r+=this.shoku.shoku;
+        return r;
+    }
+    
     public void testPrint()
     {
         System.out.print(this.value);

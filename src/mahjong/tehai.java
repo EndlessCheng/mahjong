@@ -262,6 +262,7 @@ public class tehai{
     void replace(int index, int n){
         tehai[index] = new hai(n);
         this.sortTehai();
+        this.origin=this.originModify();
         this.stepsToWin();
     }
     
@@ -352,7 +353,7 @@ public class tehai{
     
      private void stepsToWin(){//必要针对不同牌数的情况
         int steps = 9 - this.mod*2;
-        int usefulTatsu = 4 - this.mod;
+        int usefulTatsu = 5 - this.mod;
         int tatsuCount = 0;
         int steps7 = 7;
         int stepsk = 14;
@@ -377,10 +378,7 @@ public class tehai{
                     else if(localCopy[i+1]!=null&&localCopy[i].identical(localCopy[i+1])){
                         steps -= 1;
                         pairused ++;
-                        if(pairused>1){
-                            tatsuCount++;
-                            
-                        }
+                        tatsuCount++;
                         localCopy[i].setUsed();
                         localCopy[i+1].setUsed();
                     }
@@ -400,10 +398,14 @@ public class tehai{
                 steps7 = steps7 - tileCounter()[0];
                 stepsk = stepsk - this.different19() - this.hasA19Pair();
             }
+//            if(pairused>1){
+//                tatsuCount += pairused-1;
+//            }
             if(tatsuCount>usefulTatsu){
                 steps = steps + tatsuCount-usefulTatsu;
             }
-            if(steps==0&&pairused==0){
+            
+            if(/*steps==0&&*/tatsuCount==usefulTatsu&&pairused==0){
                 steps +=1;  
             }
 //            else if(steps==1){
@@ -453,6 +455,16 @@ public class tehai{
             }
         }
         return board;
+    }
+    
+    private String originModify(){
+        String newString = "";
+        int i = 0;
+        while(this.tehai[i]!=null){
+            newString += this.tehai[i].readHai();
+            i++;
+        }
+        return newString;
     }
     
       
