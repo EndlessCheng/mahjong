@@ -72,6 +72,13 @@ public class hai {
         return this.value==1||this.value==9||this.shoku==shoku.JIHAI;
     }
     
+    public String readHai(){
+        String r="";
+        r+=String.valueOf(this.value);
+        r+=this.shoku.shoku;
+        return r;
+    }
+    
     public void testPrint()
     {
         System.out.print(this.value);
@@ -100,7 +107,7 @@ public class hai {
     }
     
     public boolean tatsu(hai h){
-        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1)&&this.shoku!=shoku.JIHAI;
+        return h.shoku==this.shoku&&(Math.abs(h.value-this.value)==2||Math.abs(h.value-this.value)==1)&&this.shoku!=shoku.JIHAI&&!h.used();
     }
     
 //    public boolean sp23334(hai a, hai b, hai c, hai d,hai e){
