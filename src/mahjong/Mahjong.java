@@ -25,87 +25,93 @@ public class Mahjong {
        }
        tehai t = new tehai(str);
        t.testPrint();
-       
-       
-       
-       
-       int save = m.simulate(t);
-       System.out.println(save);
-//       int c = 0;
-//       while(t.tehai[c]!=null){
-//           if(save[c][0]==1){
-//               System.out.print("打");
-//               t.tehai[c].testPrint();                
-//               System.out.print("摸");
-//               int count =0;
-//               for(int j =1;j<38;j++){             
-//                   if(save[c][j]==1){
-//                       new hai(j).testPrint();
-//                        count++;                      
-//                    }
-//                }
-//               System.out.println("共" + count +"种");
-//                
-//            }
-//            c++;
-//        }
+       //m.simulate(t,0);
+       int s = m.simulate(t,0);
+       //System.out.println(s);
     }
     
-    public int simulate(tehai h){
+    public static int simulate(tehai h,int adv){
+        //System.out.println("now calculating:");
+        //h.testPrint();
         int current = h.getStw();
         int[][] board = new int[h.tehaiCount][38];
-
+        int a = adv;
+        int sum =0;
+        
         //原代码    
         
         for(int i = 0; i < h.tehaiCount;i++){
-            for(int j = 1; j <37;j++){
+            for(int j = 1; j <38;j++){
                 //替换机制
                 tehai next = h.copy();
+                //next.testPrint();
                 next.replace(i, j);
-//                if(next.getStw()<current&&j%10!=0&&current>1){
-//                    board[i][0]=1;
-//                    //board[i][j]=1;
-//                    board[i][j]=simulate(next);
-//                }
-//                else if(next.getStw()<current&&j%10!=0&&current==1)
-//                {
-                if(next.getStw()<current&&j%10!=0){
-                    board[i][0]=1;
+                //next.testPrint();
+                if(next.getStw()<current&&j%10!=0&&current>1){
+                    board[i][j]=simulate(next,a+1);
+                    board[i][0]+=board[i][j];
+                    sum+=board[i][j];
+                }
+                else if(next.getStw()<current&&j%10!=0&&current==1)
+                {
                     board[i][j]=1;
-                //}
+                    board[i][0]+=1;
+                    sum+=1;
+                    //System.out.println(sum);
                 }
             }
         }
-        int c = 0;
-        int count =0;
-        while(h.tehai[c]!=null/*&&h.findNextDifferent(h.tehai,c)!=-1*/){
-            if(board[c][0]==1){
-                int scount=0;
-                System.out.print("打");
-                h.tehai[c].testPrint();                
-                System.out.print("摸");
-                for(int j =1;j<38;j++){             
-                    if(board[c][j]!=0){
-                        new hai(j).testPrint();
-                        count+=board[c][j];
-                        scount++;
-                    }
+        
+//        for(int i=0;i<h.tehaiCount;i++)
+//        {
+//            if(board[i][0]!=0)
+//            {
+//                sum+=board[i][0];
+//                //System.out.println(sum);
+//            }
+//        }
+//        int c = 0;
+//        int count =0;
+//        while(h.tehai[c]!=null/*&&h.findNextDifferent(h.tehai,c)!=-1*/){
+//            if(board[c][0]!=0){
+//                int scount=0;
+//                System.out.print("打");
+//                h.tehai[c].testPrint();                
+//                System.out.print("摸");
+//                for(int j =1;j<38;j++){             
+//                    if(board[c][j]!=0){
+//                        new hai(j).testPrint();
+//                        count+=board[c][0];
+//                        scount++;
+//                    }
+//                }
+//               System.out.println("共" + scount +"种");
+//                
+//            }
+//            if(h.findNextDifferent(h.tehai,c)!=-1){
+//                c=h.findNextDifferent(h.tehai,c);
+//            }
+//            else{
+//                break;
+//            }
+//        }
+        if(a == 0){
+            int max =0 ;
+            int i = 0;
+            while(h.tehai[i]!=null){
+                h.tehai[i].testPrint();
+                System.out.println(board[i][0]);
+                if(board[i][0]!=0&&board[i][0]>board[max][0]){
+                    max = i;
                 }
-               System.out.println("共" + scount +"种");
+                i++;
                 
             }
-            if(h.findNextDifferent(h.tehai,c)!=-1){
-                c=h.findNextDifferent(h.tehai,c);
-            }
-            else{
-                break;
-            }
+            System.out.print("推荐打：");
+            h.tehai[max].testPrint();
+                
         }
-        return count;
+        
+        return sum;
     }
-    
-    
-    
-    
-    
-}
+ }
