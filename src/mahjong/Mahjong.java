@@ -3,31 +3,75 @@ package mahjong;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import net.sourceforge.jpcap.util.*;
+import net.sourceforge.jpcap.capture.*;
+import net.sourceforge.jpcap.net.*;
 
 public class Mahjong {
+    String hand;
      private static String readUserInput() throws IOException
      {
         InputStreamReader r = new InputStreamReader(System.in);
         return new BufferedReader(r).readLine();
     }
+     
+    public void writeHand(String s){
+        this.hand += s;
+    }
    
     public static void main(String[] args) throws CloneNotSupportedException
-    {
-       Mahjong m = new Mahjong();
-      
-        String str="";
-       try
-       {
-           str = readUserInput();
-       }
-       catch(Exception e){   
-            e.printStackTrace();  
-       }
-       tehai t = new tehai(str);
-       t.testPrint();
-       //m.simulate(t,0);
-       int s = m.simulate(t,0);
-       //System.out.println(s);
+    {   
+        Mahjong m = new Mahjong();
+        try {
+            if(1==1){
+                Sniffer sniffer = new Sniffer("\\Device\\NPF_{874B5A44-BE03-460C-92F4-56B47158FC6B}");
+            } 
+            else{
+                System.out.println("Usage: java Sniffer [device name]");
+                System.out.println("Available network devices on your machine:");
+                String[] devs = PacketCapture.lookupDevices();
+                for(int i = 0; i < devs.length ; i++)
+                System.out.println("\t" + devs[i] + "\t" + "num:" + i);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            }
+       
+//        String str="";
+//       try
+//       {
+//           str = readUserInput();
+//       }
+//       catch(Exception e){   
+//            e.printStackTrace();  
+//       }
+//       String haiString ="";
+//                for(int i=0;i<str.length();i++){
+//                    if(Character.isWhitespace(str.charAt(i))){
+//                        str.replace(str.charAt(i), ' ');
+//                    }
+//                }
+//                String[] temp = str.split(" ");
+//                for (String temp1 : temp) {
+//                    if (temp1.startsWith("hai=")){
+//                        String[] temp2 = temp1.split("\"");
+//                        String[] handRaw = temp2[1].split(",");
+//                        for(String temp3 : handRaw){
+//                            haiString += hai.tenhouConv(temp3);
+//                        }
+//                        
+//                    }
+//                    else if(temp1.startsWith("<T")){
+//                        haiString += hai.tenhouConv(temp1.split("/")[0].substring(2));
+//                    }
+//                }
+//            
+//            System.out.println(haiString);
+//       tehai t = new tehai(str);
+//       t.testPrint();
+//       //m.simulate(t,0);
+//       int s = m.simulate(t,0);
+//       //System.out.println(s);
     }
     
     public static int simulate(tehai h,int adv){
@@ -47,12 +91,12 @@ public class Mahjong {
                 //next.testPrint();
                 next.replace(i, j);
                 //next.testPrint();
-                if(next.getStw()<current&&j%10!=0&&current>1){
+                if(next.getStw()<current&&j%10!=0&&current>1&&a<2){
                     board[i][j]=simulate(next,a+1);
                     board[i][0]+=board[i][j];
                     sum+=board[i][j];
                 }
-                else if(next.getStw()<current&&j%10!=0&&current==1)
+                else if(next.getStw()<current&&j%10!=0&&(current==1||a==2))
                 {
                     board[i][j]=1;
                     board[i][0]+=1;
@@ -99,15 +143,15 @@ public class Mahjong {
             int max =0 ;
             int i = 0;
             while(h.tehai[i]!=null){
-                h.tehai[i].testPrint();
-                System.out.println(board[i][0]);
+                //h.tehai[i].testPrint();
+                //System.out.println(board[i][0]);
                 if(board[i][0]!=0&&board[i][0]>board[max][0]){
                     max = i;
                 }
                 i++;
                 
             }
-            System.out.print("推荐打：");
+            System.out.print("Recommended：");
             h.tehai[max].testPrint();
                 
         }

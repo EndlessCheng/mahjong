@@ -4,7 +4,6 @@
  */
 package mahjong;
 import java.math.*;
-
 /**
  *
  * @author Hakurei
@@ -120,6 +119,26 @@ public class hai {
 //    }
     public boolean used(){
         return this.used;
+    }
+    
+    public static String tenhouConv(String s){
+        String newstring =s.replaceAll("\"", "");
+        int n = Integer.parseInt(newstring);
+        String result = "";
+        int suji = (n-(n/36)*36-1)/4+1;
+        result += String.valueOf(suji);
+        if(n<=36){
+            result += "m";
+        }
+        else if(n<=72){
+            result += "p";
+        }
+        else if(n<=108){
+            result += "s";
+        }
+        else result += "z";
+        
+        return result;       
     }
     
     public hai copy(){
