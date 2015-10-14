@@ -87,7 +87,7 @@ class PacketHandler implements PacketListener
                 String[] temp = isoData.split(" ");
                  for (String temp1 : temp) {
                      System.out.println(temp1);
-                    if(temp1.startsWith("<T")){
+                    if(temp1.contains("<T")){
                     
                         haiString += hai.tenhouConv(temp1.split("<T")[1].split("/")[0]);
                         System.out.println("增加牌:"+hai.tenhouConv(temp1.split("<T")[1].split("/")[0]));
