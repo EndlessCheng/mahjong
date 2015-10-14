@@ -20,6 +20,7 @@ public class Mahjong {
     }
    
     public static void main(String[] args) throws CloneNotSupportedException
+<<<<<<< HEAD
     {   
         Mahjong m = new Mahjong();
         try {
@@ -72,6 +73,24 @@ public class Mahjong {
 //       //m.simulate(t,0);
 //       int s = m.simulate(t,0);
 //       //System.out.println(s);
+=======
+    {
+       Mahjong m = new Mahjong();
+      
+        String str="";
+       try
+       {
+           str = readUserInput();
+       }
+       catch(Exception e){   
+            e.printStackTrace();  
+       }
+       tehai t = new tehai(str);
+       t.testPrint();
+       //m.simulate(t,0);
+       int s = m.simulate(t,0);
+       //System.out.println(s);
+>>>>>>> origin/master
     }
     
     public static int simulate(tehai h,int adv){
@@ -91,12 +110,20 @@ public class Mahjong {
                 //next.testPrint();
                 next.replace(i, j);
                 //next.testPrint();
+<<<<<<< HEAD
                 if(next.getStw()<current&&j%10!=0&&current>1&&a<2){
+=======
+                if(next.getStw()<current&&j%10!=0&&current>1){
+>>>>>>> origin/master
                     board[i][j]=simulate(next,a+1);
                     board[i][0]+=board[i][j];
                     sum+=board[i][j];
                 }
+<<<<<<< HEAD
                 else if(next.getStw()<current&&j%10!=0&&(current==1||a==2))
+=======
+                else if(next.getStw()<current&&j%10!=0&&current==1)
+>>>>>>> origin/master
                 {
                     board[i][j]=1;
                     board[i][0]+=1;
@@ -143,15 +170,24 @@ public class Mahjong {
             int max =0 ;
             int i = 0;
             while(h.tehai[i]!=null){
+<<<<<<< HEAD
                 //h.tehai[i].testPrint();
                 //System.out.println(board[i][0]);
+=======
+                h.tehai[i].testPrint();
+                System.out.println(board[i][0]);
+>>>>>>> origin/master
                 if(board[i][0]!=0&&board[i][0]>board[max][0]){
                     max = i;
                 }
                 i++;
                 
             }
+<<<<<<< HEAD
             System.out.print("Recommended：");
+=======
+            System.out.print("推荐打：");
+>>>>>>> origin/master
             h.tehai[max].testPrint();
                 
         }
